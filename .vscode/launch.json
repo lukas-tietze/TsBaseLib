@@ -1,0 +1,105 @@
+{
+  // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+  // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+  // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Server starten (ts-node)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register/transpile-only",
+        "--experimental-specifier-resolution=node",
+      ],
+      "args": [
+        "${workspaceFolder}/src/server/src/app"
+      ],
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Playground starten",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "${workspaceFolder}/dist/tools/playground.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "{workspaceFolder}/node_modules/**"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Playground starten (Erstellen)",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "${workspaceFolder}/dist/tools/playground.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "preLaunchTask": "Tools kompilieren",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server starten",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "${workspaceFolder}/dist/server/src/app.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server starten (Erstellen)",
+      "preLaunchTask": "Server kompilieren",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "${workspaceFolder}/dist/server/src/app.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Balancing-Tool starten",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "${workspaceFolder}/dist/tools/fleet-generator/balancing-tool.js"
+      ],
+      // "preLaunchTask": "tsc:build_fleet_generator",
+      "outFiles": [
+        "${workspaceFolder}/dist/tools/fleet-generator/*.js"
+      ]
+    }
+  ]
+}

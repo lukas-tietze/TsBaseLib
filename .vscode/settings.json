@@ -1,0 +1,77 @@
+{
+  "[typescript]": {
+    "editor.tabSize": 2
+  },
+  "[html]": {
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 2
+  },
+  "[csharp]": {
+    "editor.tabSize": 4
+  },
+  "cSpell.language": "en,de-DE",
+  "cSpell.words": [
+    "abbrechbar",
+    "Abbrechbarkeit",
+    "Datenbankentität",
+    "deabonniert",
+    "Dekorator",
+    "Dekoratoren",
+    "Dekorators",
+    "Eingabevariablen",
+    "Extraktions",
+    "Extraktoren",
+    "gehashed",
+    "Generatorfunktion",
+    "Gravitonium",
+    "Hashen",
+    "heruntergezählt",
+    "klickbaren",
+    "Kolonisierungsindex",
+    "Napi",
+    "nutzerspezifischen",
+    "Registrierungsprozess",
+    "Subtrahent",
+    "systemspezifischen",
+    "unconfigured",
+    "Unidentifizierbare",
+    "unkonfigurierten",
+    "versioniert"
+  ],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/dist": true
+  },
+  "dataworkspace.excludedProjects": [
+    "sql/tools/Tools/Tools.sqlproj"
+  ],
+  "files.associations": {
+    "xiosbase": "cpp",
+    "random": "cpp",
+    "compare": "cpp",
+    "format": "cpp",
+    "functional": "cpp",
+    "memory": "cpp",
+    "ratio": "cpp",
+    "tuple": "cpp",
+    "type_traits": "cpp",
+    "utility": "cpp",
+    "variant": "cpp",
+    "xmemory": "cpp",
+    "xstring": "cpp",
+    "xtr1common": "cpp",
+    "xutility": "cpp"
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "workbench.colorTheme": "Winter is Coming (Dark Blue)"
+}

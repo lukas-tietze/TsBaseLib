@@ -1,0 +1,32 @@
+{
+  "name": "@churill/time-span",
+  "version": "0.0.1-preview5",
+  "private": false,
+  "preview": true,
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "npx rollup --config ./rollup.config.ts --configPlugin typescript"
+  },
+  "author": "Lukas Tietze",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "tslib": "^2.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

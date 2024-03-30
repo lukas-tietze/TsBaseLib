@@ -1,0 +1,149 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pre-Build",
+      "type": "shell",
+      "command": "node scripts/pre-build.js",
+      "group": "build",
+    },
+    {
+      "label": "Node-Addons kompilieren",
+      "type": "shell",
+      "command": "pwsh ./scripts/build-addons.ps1",
+      "group": "build",
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "tsconfig.json",
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "group": "build",
+      "label": "tsc:build_lunarx_server",
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+    {
+      "label": "Server kompilieren",
+      "type": "shell",
+      "group": "build",
+      "detail": "Kompiliert den Server.",
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "command": "tsc",
+      "args": [
+        "-b",
+        "--pretty",
+        "./src/server/tsconfig.json"
+      ],
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+    {
+      "label": "Client kompilieren (watch)",
+      "type": "npm",
+      "group": "build",
+      "isBackground": true,
+      "detail": "Startet die Kompilierung des Klienten im Überwachungsmodus. Das heißt, Kompilierung startet automatisch neu, wenn sich eine Datei ändert.",
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
+      "script": "v-tsc:client",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+        "close": true
+      },
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+    {
+      "label": "Server kompilieren (watch)",
+      "type": "shell",
+      "group": "build",
+      "isBackground": true,
+      "detail": "Startet die Kompilierung des Servers im Überwachungsmodus. Das heißt, Kompilierung startet automatisch neu, wenn sich eine Datei ändert.",
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
+      "command": "tsc",
+      "args": [
+        "-b",
+        "--watch",
+        "--pretty",
+        "./src/server/tsconfig.json"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+        "close": true
+      },
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+    {
+      "label": "Tools kompilieren (watch)",
+      "type": "shell",
+      "group": "build",
+      "isBackground": true,
+      "detail": "Startet die Kompilierung des Tools-Projekts im Überwachungsmodus. Das heißt, Kompilierung startet automatisch neu, wenn sich eine Datei ändert.",
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
+      "command": "tsc",
+      "args": [
+        "-b",
+        "--watch",
+        "--pretty",
+        "./src/tools/tsconfig.json"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false,
+        "close": true
+      },
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+    {
+      "label": "Tools kompilieren",
+      "type": "shell",
+      "group": "build",
+      "detail": "Kompiliert das Projekt Tools.",
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "command": "tsc",
+      "args": [
+        "-b",
+        "--pretty",
+        "./src/tools/tsconfig.json"
+      ],
+      "dependsOn": [
+        "Pre-Build"
+      ]
+    },
+  ]
+}
