@@ -1,6 +1,6 @@
 {
   "name": "@churill/time-span",
-  "version": "0.0.1-preview5",
+  "version": "0.0.1-preview6",
   "private": false,
   "preview": true,
   "description": "",
@@ -18,7 +18,9 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "npx rollup --config ./rollup.config.ts --configPlugin typescript"
+    "build": "tsc",
+    "clean": "rm -rf ./dist",
+    "rebuild": "npm run clean ; npm run build"
   },
   "author": "Lukas Tietze",
   "license": "MIT",
