@@ -2,19 +2,8 @@
 // Diese Datei erweitert die Funktion der eingebauten Klasse `Date`.
 // -------------------------------------------------------------------------------
 
-import type { TimeSpan } from '../time-span';
-
 declare global {
   interface Date {
-    /**
-     * Erzeugt eine neue {@link Date}-Instanz, die der aktuellen Instanz plus
-     * der gegebenen Zeitspanne entspricht.
-     *
-     * @param span Die zu addierende Zeitspanne.
-     * @returns Eine neue {@link Date}-Instanz zu der die gegebene Zeitspanne addiert wurde.
-     */
-    add(span: TimeSpan): Date;
-
     /**
      * Erzeugt eine neue {@link Date}-Instanz, die der aktuellen Instanz plus
      * der gegebenen Stunden entspricht.
@@ -66,16 +55,6 @@ declare global {
  * Registriert die Erweiterungen für die Klasse {@link Date}.
  */
 export function useDateExtensions(): void {
-  if (!Date.prototype.add) {
-    Date.prototype.add = function (span: TimeSpan) {
-      const copy = new Date(this);
-
-      copy.setHours(copy.getHours() + span.hours);
-
-      return copy;
-    };
-  }
-
   if (!Date.prototype.addHours) {
     Date.prototype.addHours = function (hours: number) {
       const copy = new Date(this);

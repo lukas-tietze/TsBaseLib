@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import { TimeSpan } from '../src';
 
 describe('time-span', () => {
