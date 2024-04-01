@@ -93,6 +93,8 @@ describe('time-span', () => {
   });
 
   it('should format correctly', () => {
+    expect(TimeSpan.fromTimes({ milliseconds: 5, seconds: 4, minutes: 3, hours: 2 }).toString()).toStrictEqual('2:03:04.005');
+
     expect(TimeSpan.fromTimes({ milliseconds: 5, seconds: 4, minutes: 3, hours: 2, days: 1 }).toString()).toStrictEqual('26:03:04.005');
     expect(
       TimeSpan.fromTimes({ milliseconds: 5, seconds: 4, minutes: 3, hours: 2, days: 1 }).toString({ milliseconds: false })
@@ -101,5 +103,45 @@ describe('time-span', () => {
     expect(TimeSpan.fromTimes({ seconds: 4, minutes: 3, hours: 2, days: 1 }).toString({ milliseconds: true })).toStrictEqual(
       '26:03:04.000'
     );
+  });
+
+  it('should be formatted to json correctly', () => {
+    const obj = {
+      withMs: TimeSpan.fromTimes({ seconds: 10, milliseconds: 5 }),
+      noMs: TimeSpan.fromTimes({ seconds: 10 }),
+    };
+
+    const json = JSON.stringify(obj);
+
+    expect(JSON.parse(json)).toEqual({
+      withMs: '0:00:10.005',
+      noMs: '0:00:10',
+    });
+  });
+
+  it('should be parsed correctly', () => {
+    let t = TimeSpan.parse('0:10:10.005');
+
+    expect(t.days).toStrictEqual(0);
+    expect(t.hours).toStrictEqual(0);
+    expect(t.minutes).toStrictEqual(10);
+    expect(t.seconds).toStrictEqual(10);
+    expect(t.milliseconds).toStrictEqual(5);
+
+    t = TimeSpan.parse('49:00:00');
+
+    expect(t.days).toStrictEqual(2);
+    expect(t.hours).toStrictEqual(1);
+    expect(t.minutes).toStrictEqual(0);
+    expect(t.seconds).toStrictEqual(0);
+    expect(t.milliseconds).toStrictEqual(0);
+
+    t = TimeSpan.parse('-49:00:00');
+
+    expect(t.days).toStrictEqual(-2);
+    expect(t.hours).toStrictEqual(-1);
+    expect(t.minutes).toStrictEqual(-0);
+    expect(t.seconds).toStrictEqual(-0);
+    expect(t.milliseconds).toStrictEqual(-0);
   });
 });

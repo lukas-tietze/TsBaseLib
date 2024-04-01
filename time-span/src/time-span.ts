@@ -190,19 +190,20 @@ export class TimeSpan {
    * - optional 3 Ziffern für die Angabe der Millisekunden
    */
   private static msFromString(value: string): number {
-    const g = /^(?<h>\d+):(?<m>\d{2}):(?<s>\d{2})(.(?<ms>\d{3}))?/.exec(value);
+    const g = /^(?<minus>-)?(?<h>\d+):(?<m>\d{2}):(?<s>\d{2})(.(?<ms>\d{3}))?/.exec(value);
 
     if (!g?.length) {
       throw new Error(`Illegal string for TimeSpan "${value}"`);
     }
 
-    return this.msFromTimes({
+    const ms = this.msFromTimes({
       milliseconds: Number(g?.groups?.ms) || undefined,
       seconds: Number(g?.groups?.s) || undefined,
       minutes: Number(g?.groups?.m) || undefined,
       hours: Number(g?.groups?.h) || undefined,
-      days: Number(g?.groups?.d) || undefined,
     });
+
+    return g?.groups?.minus ? -ms : ms;
   }
 
   /**
@@ -223,28 +224,28 @@ export class TimeSpan {
    * Holt die Sekunden-Komponente.
    */
   public get seconds(): number {
-    return Math.floor((this.value % TimeSpan.MS_MINUTE) / TimeSpan.MS_SECOND);
+    return Math.trunc((this.value % TimeSpan.MS_MINUTE) / TimeSpan.MS_SECOND);
   }
 
   /**
    * Holt die Minuten-Komponente.
    */
   public get minutes(): number {
-    return Math.floor((this.value % TimeSpan.MS_HOUR) / TimeSpan.MS_MINUTE);
+    return Math.trunc((this.value % TimeSpan.MS_HOUR) / TimeSpan.MS_MINUTE);
   }
 
   /**
    * Holt die Stunden-Komponente.
    */
   public get hours(): number {
-    return Math.floor((this.value % TimeSpan.MS_DAY) / TimeSpan.MS_HOUR);
+    return Math.trunc((this.value % TimeSpan.MS_DAY) / TimeSpan.MS_HOUR);
   }
 
   /**
    * Holt die Tages-Komponente.
    */
   public get days(): number {
-    return Math.floor(this.value / TimeSpan.MS_DAY);
+    return Math.trunc(this.value / TimeSpan.MS_DAY);
   }
 
   /**
@@ -508,7 +509,7 @@ export class TimeSpan {
    * @returns Den erzeugten String.
    */
   public toString(options?: ToStringOptions): string {
-    const hours = (this.hours + this.days * 24).toFixed(0).padStart(2, '0');
+    const hours = (this.hours + this.days * 24).toFixed(0);
     const minutes = this.minutes.toFixed(0).padStart(2, '0');
     const seconds = this.seconds.toFixed(0).padStart(2, '0');
 
@@ -521,6 +522,16 @@ export class TimeSpan {
     }
 
     return res;
+  }
+
+  /**
+   * Wird von {@link JSON.stringify} aufgerufen und erzeugt
+   * die String-Repräsentation der Zeitspanne für die Darstellung in JSON.
+   *
+   * @returns Den Wert zum Einfügen ins JSON.
+   */
+  public toJSON(): string {
+    return this.toString();
   }
 
   /**
