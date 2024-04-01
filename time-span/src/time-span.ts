@@ -1,18 +1,56 @@
 import { TimeSpanFormat } from './time-span-format';
 
+/**
+ * Schlüssel für Bestandteile einer Zeitspann.
+ */
 export type TimeSpanComponent = 'd' | 'h' | 'm' | 's' | 'ms';
 
-//// TODO: Doku
+/**
+ * Stellt erweiterte Optionen für den Aufruf von {@link TimeSpan.toString} dar.
+ */
+export type ToStringOptions = {
+  /**
+   * Gibt an, ob Millisekunden dargestellt werden sollen oder nicht.
+   * Standardmäßig werden Millisekunden dargestellt, wenn der Wert ungleich 0 ist.
+   */
+  milliseconds?: boolean;
+};
+
+/**
+ * Stellt Daten zur Initialisierung einer {@link TimeSpan}-Instanz
+ * aus verschiedenen Grundwerten bereit.
+ */
 type TimeSpanObjectInit = {
+  /**
+   * Die Anzahl der Tage.
+   */
   days?: number;
+
+  /**
+   * Die Anzahl der Stunden.
+   */
   hours?: number;
+
+  /**
+   * Die Anzahl der Minuten.
+   */
   minutes?: number;
+
+  /**
+   * Die Anzahl der Sekunden.
+   */
   seconds?: number;
+
+  /**
+   * Die Anzahl der Millisekunden.
+   */
   milliseconds?: number;
 };
 
-//// TODO: Doku
-
+/**
+ * Stellt Optionen zum Initialisieren einer {@link TimeSpan}-Instanz
+ * über {@link TimeSpan.fromAny} dar.
+ */
 export type TimeSpanInit = TimeSpan | string | number | TimeSpanObjectInit;
 
 /**
@@ -63,7 +101,19 @@ export class TimeSpan {
     this.value = milliseconds;
   }
 
-  //// TODO: DOku
+  /**
+   * Erzeugt eine neue {@link TimeSpan}-Instanz aus einem Wert, der wie folgt interpretiert wird:
+   *
+   * | Wert                                                | Verarbeitung                                 |
+   * | --------------------------------------------------- | -------------------------------------------- |
+   * | Instanz von {@link TimeSpan}                        | Kopie erzeugen                               |
+   * | Objekt, das {@link TimeSpanObjectInit} entspricht   | Aufruf von {@link TimeSpan.fromTimes}        |
+   * | Zahl                                                | Aufruf von {@link TimeSpan.fromMilliseconds} |
+   * | String                                              | Aufruf von {@link TimeSpan.parse}            |
+   *
+   * @param init Der initiale Wert.
+   * @returns Die erzeugte Instanz.
+   */
   public static fromAny(init: TimeSpanInit): TimeSpan {
     if (typeof init === 'number') {
       return new TimeSpan(init);
@@ -73,24 +123,42 @@ export class TimeSpan {
       if ('value' in init && typeof init.value === 'number') {
         return new TimeSpan(init.value);
       } else {
-        return TimeSpan.FromTimes(init as TimeSpanObjectInit);
+        return TimeSpan.fromTimes(init as TimeSpanObjectInit);
       }
     } else {
       throw new Error('TimeSpan initialization with illegal value');
     }
   }
 
-  //// TODO: DOku
+  /**
+   * Liest eine {@link TimeSpan}-Instanz aus einem String ein.
+   * Das erlaubte Format ist dabei
+   *
+   * @param value Der auszuwertende String.
+   * @returns Die erzeugte Instanz.
+   */
   public static parse(value: string): TimeSpan {
     return new TimeSpan(this.msFromString(value));
   }
 
-  //// TODO: DOku
-  public static FromTimes(value: TimeSpanObjectInit): TimeSpan {
+  /**
+   * Erzeugt eine {@link TimeSpan}-Instanz aus Einzelwerten.
+   * Diese Einzelwerte dürfen nicht negativ sein.
+   *
+   * @param value Die Einzelwerte.
+   * @returns Die erzeugte Instanz.
+   */
+  public static fromTimes(value: TimeSpanObjectInit): TimeSpan {
     return new TimeSpan(this.msFromTimes(value));
   }
 
-  //// TODO: DOku
+  /**
+   * Berechnet die gesamten Millisekunden aus Einzelwerten.
+   * Diese Einzelwerte dürfen nicht negativ sein.
+   *
+   * @param value Die Einzelwerte.
+   * @returns Die erzeugte Instanz.
+   */
   private static msFromTimes(value: TimeSpanObjectInit): number {
     return (
       Math.max(0, value.days || 0) * this.MS_DAY +
@@ -101,21 +169,41 @@ export class TimeSpan {
     );
   }
 
-  //// TODO: DOku
+  /**
+   * Parst einen String und gibt die Millisekunden zurück. Erlaubt ist das Format, das
+   * auch von {@link toString} genutzt wird, z.B.
+   *
+   * - `4:31:12`
+   * - `0:00:00`
+   * - `1251:00:00`
+   * - `1:00:00.341`
+   *
+   * Beschreibung:
+   * Formal: `[-]h[h[h[h...]]]:mm:ss[.fff]`
+   * - optionales `-`
+   * - beliebig viele Ziffern für die Angabe der Stunden
+   * - Trennzeichen `:`
+   * - 2 Ziffern für die Angabe der Minuten
+   * - Trennzeichen `:`
+   * - 2 Ziffern für die Angabe der Sekunden
+   * - Trennzeichen `.`
+   * - optional 3 Ziffern für die Angabe der Millisekunden
+   */
   private static msFromString(value: string): number {
-    const g = /^\s*(?:(?<d>\d+)d)?\s*(?:(?<h>\d+)h)?\s*(?:(?<m>\d+)m)?\s*(?:(?<s>\d+)s)?\s*(?:(?<ms>\d+)ms)?\s*$/.exec(value);
+    const g = /^(?<minus>-)?(?<h>\d+):(?<m>\d{2}):(?<s>\d{2})(.(?<ms>\d{3}))?/.exec(value);
 
     if (!g?.length) {
       throw new Error(`Illegal string for TimeSpan "${value}"`);
     }
 
-    return this.msFromTimes({
+    const ms = this.msFromTimes({
       milliseconds: Number(g?.groups?.ms) || undefined,
       seconds: Number(g?.groups?.s) || undefined,
       minutes: Number(g?.groups?.m) || undefined,
       hours: Number(g?.groups?.h) || undefined,
-      days: Number(g?.groups?.d) || undefined,
     });
+
+    return g?.groups?.minus ? -ms : ms;
   }
 
   /**
@@ -136,28 +224,28 @@ export class TimeSpan {
    * Holt die Sekunden-Komponente.
    */
   public get seconds(): number {
-    return Math.floor((this.value % TimeSpan.MS_MINUTE) / TimeSpan.MS_SECOND);
+    return Math.trunc((this.value % TimeSpan.MS_MINUTE) / TimeSpan.MS_SECOND);
   }
 
   /**
    * Holt die Minuten-Komponente.
    */
   public get minutes(): number {
-    return Math.floor((this.value % TimeSpan.MS_HOUR) / TimeSpan.MS_MINUTE);
+    return Math.trunc((this.value % TimeSpan.MS_HOUR) / TimeSpan.MS_MINUTE);
   }
 
   /**
    * Holt die Stunden-Komponente.
    */
   public get hours(): number {
-    return Math.floor((this.value % TimeSpan.MS_DAY) / TimeSpan.MS_HOUR);
+    return Math.trunc((this.value % TimeSpan.MS_DAY) / TimeSpan.MS_HOUR);
   }
 
   /**
    * Holt die Tages-Komponente.
    */
   public get days(): number {
-    return Math.floor(this.value / TimeSpan.MS_DAY);
+    return Math.trunc(this.value / TimeSpan.MS_DAY);
   }
 
   /**
@@ -210,17 +298,28 @@ export class TimeSpan {
     return new Date(new Date(to).getTime() + this.value);
   }
 
-  //// TODO: Doku
   public subtractFrom(to: Date | string | number): Date {
     return new Date(new Date(to).getTime() - this.value);
   }
 
-  //// TODO: Doku
+  /**
+   * Erzeugt eine neue {@link TimeSpan}-Instanz, deren Wert, die Summe
+   * aus der aktuellen Instanz und {@link to} darstellt.
+   *
+   * @param to Der zweite Summand.
+   * @returns Eine neue {@link TimeSpan}-Instanz.
+   */
   public add(other: TimeSpan): TimeSpan {
     return new TimeSpan(this.value + other.value);
   }
 
-  //// TODO: Doku
+  /**
+   * Erzeugt eine neue {@link TimeSpan}-Instanz, deren Wert, die Differenz
+   * aus der aktuellen Instanz und {@link to} darstellt.
+   *
+   * @param to Der Subtrahend.
+   * @returns Eine neue {@link TimeSpan}-Instanz.
+   */
   public sub(other: TimeSpan): TimeSpan {
     return new TimeSpan(this.value - other.value);
   }
@@ -409,12 +508,30 @@ export class TimeSpan {
    *
    * @returns Den erzeugten String.
    */
-  public toString(): string {
-    const hours = this.hours.toFixed(0).padStart(2, '0');
+  public toString(options?: ToStringOptions): string {
+    const hours = (this.hours + this.days * 24).toFixed(0);
     const minutes = this.minutes.toFixed(0).padStart(2, '0');
     const seconds = this.seconds.toFixed(0).padStart(2, '0');
 
-    return `${hours}:${minutes}:${seconds}`;
+    let res = `${hours}:${minutes}:${seconds}`;
+
+    const ms = this.milliseconds;
+
+    if (options?.milliseconds === true || (options?.milliseconds !== false && ms !== 0)) {
+      res += '.' + ms.toFixed(0).padStart(3, '0');
+    }
+
+    return res;
+  }
+
+  /**
+   * Wird von {@link JSON.stringify} aufgerufen und erzeugt
+   * die String-Repräsentation der Zeitspanne für die Darstellung in JSON.
+   *
+   * @returns Den Wert zum Einfügen ins JSON.
+   */
+  public toJSON(): string {
+    return this.toString();
   }
 
   /**
