@@ -1,6 +1,6 @@
 {
-  "name": "@churill/time-span",
-  "version": "0.0.1-preview6",
+  "name": "@churill/dependency-injection",
+  "version": "0.0.1-preview1",
   "private": false,
   "preview": true,
   "description": "",
