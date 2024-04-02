@@ -1,14 +1,8 @@
-import { Metadata } from '../meta-data';
 import { DependencyDescriptor } from './dependency-descriptor';
 import { DiProvider } from './di-provider';
-import { InjectableConfig } from './injectable-config';
-import { Injectable, InjectableTypes } from './injectable-decorator';
+import { InjectableTypes } from './injectable-decorator';
 import { InjectionHints } from './injection-hints';
 import { InjectionToken } from './injection-token';
-import { DI_OPTIONS_METADATA_KEY } from './metadata-key';
-import { ScopedDependencyDescriptor } from './scoped-dependency-descriptor';
-import { SingletonDependencyDescriptor } from './singleton-dependency-descriptor';
-import { TransientDependencyDescriptor } from './transient-dependency-descriptor';
 import { Ctor, ProviderFunction, Scope } from './types';
 
 /**
@@ -59,26 +53,20 @@ export class DiInjector {
    * @returns Die aktuelle Instanz, um Method-Chaining zu ermöglichen.
    */
   public addDecorated(): DiInjector {
-    for (const type of InjectableTypes) {
-      const options = Metadata.fromConstructor(type).get(DI_OPTIONS_METADATA_KEY) as InjectableConfig | undefined;
-
-      if (!options) {
-        continue;
-      }
-
+    for (const { ctor, options } of InjectableTypes) {
       switch (options.scope) {
         case 'scoped':
-          this.addScoped(type as Ctor<unknown>);
+          this.addScoped(ctor as Ctor<unknown>);
           break;
         case 'singleton':
-          this.addSingleton(type as Ctor<unknown>);
+          this.addSingleton(ctor as Ctor<unknown>);
           break;
         case 'transient':
-          this.addTransient(type as Ctor<unknown>);
+          this.addTransient(ctor as Ctor<unknown>);
           break;
         case undefined:
           throw new Error(
-            `Fehlender Geltungsbereich (Scope) bei Klasse ${type.name}! Vermutlich wurde ein Parameter dekoriert, ohne die Klasse mit @Injectable zu markieren.`
+            `Fehlender Geltungsbereich (Scope) bei Klasse ${ctor.name}! Vermutlich wurde ein Parameter dekoriert, ohne die Klasse mit @Injectable zu markieren.`
           );
       }
     }
@@ -141,11 +129,21 @@ export class DiInjector {
   public addSingleton<T>(token: Ctor<T> | InjectionToken<T>, provider?: T | ProviderFunction<T>): DiInjector {
     this.validateAdd('singleton', token);
 
-    const ctor = typeof token === 'function' ? (token as Ctor<unknown>) : undefined;
-    const providerFunction = typeof provider === 'function' ? (provider as ProviderFunction<unknown>) : undefined;
-    const value = typeof provider !== 'function' ? provider : undefined;
+    let descriptorProviderFunction: ProviderFunction<T>;
 
-    this.descriptors.set(token, new SingletonDependencyDescriptor(value, ctor, providerFunction));
+    if (typeof token === 'function') {
+      const ctor = token as Ctor<T>;
+
+      descriptorProviderFunction = () => new ctor();
+    } else if (typeof provider === 'function') {
+      descriptorProviderFunction = provider as ProviderFunction<T>;
+    } else {
+      const value = provider as T;
+
+      descriptorProviderFunction = () => value;
+    }
+
+    this.descriptors.set(token, new DependencyDescriptor({ scope: 'singleton' }, descriptorProviderFunction));
 
     return this;
   }
@@ -188,15 +186,19 @@ export class DiInjector {
   public addScoped<T>(token: Ctor<T> | InjectionToken<T>, provider?: ProviderFunction<T>): DiInjector {
     this.validateAdd('scoped', token);
 
-    const ctor = typeof token === 'function' ? (token as Ctor<unknown>) : undefined;
-    const providerFunction = typeof provider === 'function' ? (provider as ProviderFunction<unknown>) : undefined;
+    let descriptorProviderFunction: ProviderFunction<T>;
 
-    // TS bekommt das sonst net mit, dass einer von beiden gegeben ist.
-    if (ctor) {
-      this.descriptors.set(token, new ScopedDependencyDescriptor(ctor, providerFunction));
-    } else if (providerFunction) {
-      this.descriptors.set(token, new ScopedDependencyDescriptor(ctor, providerFunction));
+    if (typeof token === 'function') {
+      const ctor = token as Ctor<T>;
+
+      descriptorProviderFunction = () => new ctor();
+    } else if (typeof provider === 'function') {
+      descriptorProviderFunction = provider;
+    } else {
+      throw new Error();
     }
+
+    this.descriptors.set(token, new DependencyDescriptor({ scope: 'scoped' }, descriptorProviderFunction));
 
     return this;
   }
@@ -239,11 +241,21 @@ export class DiInjector {
   public addTransient<T>(token: Ctor<T> | InjectionToken<T>, provider?: T | ProviderFunction<T>): DiInjector {
     this.validateAdd('transient', token);
 
-    const ctor = typeof token === 'function' ? (token as Ctor<unknown>) : undefined;
-    const providerFunction = typeof provider === 'function' ? (provider as ProviderFunction<unknown>) : undefined;
-    const value = typeof provider !== 'function' ? provider : undefined;
+    let descriptorProviderFunction: ProviderFunction<T>;
 
-    this.descriptors.set(token, new TransientDependencyDescriptor(ctor!, providerFunction!));
+    if (typeof token === 'function') {
+      const ctor = token as Ctor<T>;
+
+      descriptorProviderFunction = () => new ctor();
+    } else if (typeof provider === 'function') {
+      descriptorProviderFunction = provider as ProviderFunction<T>;
+    } else {
+      const value = provider as T;
+
+      descriptorProviderFunction = () => value;
+    }
+
+    this.descriptors.set(token, new DependencyDescriptor({ scope: 'transient' }, descriptorProviderFunction));
 
     return this;
   }
@@ -299,7 +311,9 @@ export class DiInjector {
       let descriptor = this.descriptors.get(token) as DependencyDescriptor<T> | undefined;
 
       if (!descriptor && !(token instanceof InjectionToken) && this.unknownScopedServicesAllowed) {
-        descriptor = new ScopedDependencyDescriptor(token, undefined);
+        const ctor = token;
+
+        descriptor = new DependencyDescriptor({ scope: 'scoped' }, () => new ctor());
 
         this.descriptors.set(token, descriptor);
       }

@@ -1,36 +1,71 @@
-import { AnyConstructor } from '../constructor';
-import { Metadata } from '../meta-data';
-import { throwError } from '../throw-helper';
 import { DiProvider } from './di-provider';
 import { InjectableConfig } from './injectable-config';
 import { InjectionHints } from './injection-hints';
-import { DI_OPTIONS_METADATA_KEY } from './metadata-key';
-import { Scope } from './types';
+import { Ctor, ProviderFunction, Scope } from './types';
 
-// TODO: Doku
+/**
+ * Stellt die Basisklasse für die Beschreibung eines injizierbaren Dienstes dar.
+ */
+export class DependencyDescriptor<T> {
+  /**
+   * Gibt an, ob bereits eine Instanz des Dienstes erzeugt wurde oder nicht.
+   */
+  private hasInstance: boolean;
 
-export abstract class DependencyDescriptor<T> {
-  private config: InjectableConfig | undefined;
+  /**
+   * Die Instanz des Dienstes.
+   */
+  private instance: T | undefined;
 
-  constructor(scope: Scope) {
-    this.scope = scope;
+  /**
+   * Initialisiert eine neue Instanz der Klasse.
+   *
+   * @param config Die Konfiguration.
+   * @param provider Die Funktion, über die der Dienst bereitgestellt wird.
+   */
+
+  constructor(private config: InjectableConfig, private provider: ProviderFunction<T>) {
+    this.hasInstance = false;
   }
 
-  public readonly scope: Scope;
+  /**
+   * Holt das Scope, über den der Dienst bereitgestellt wird.
+   */
+  public get scope(): Scope {
+    return this.config.scope;
+  }
 
-  public abstract getInstance(scopeProvider: DiProvider, hints?: InjectionHints): T;
-
-  public abstract forScopedProvider(): DependencyDescriptor<T>;
-
-  protected instantiateWithInjectedParameters(ctor: AnyConstructor<T>, scopedProvider: DiProvider, hints?: InjectionHints): T {
-    if (scopedProvider instanceof ctor) {
-      return scopedProvider;
+  /**
+   * Holt eine Instanz des Dienstes, die ggf. erst erstellt werden muss.
+   *
+   * @param scopeProvider Der ausführende  DI-Provider
+   */
+  public getInstance(scopeProvider: DiProvider, hints?: InjectionHints): T {
+    if (this.scope === 'transient') {
+      return this.provider(scopeProvider);
     }
 
-    // TODO: hints beachten.
+    if (!this.hasInstance) {
+      this.instance = this.provider(scopeProvider);
+      this.hasInstance = true;
+    }
 
-    this.config ??= Metadata.fromConstructor(ctor).get<InjectableConfig>(DI_OPTIONS_METADATA_KEY) ?? { scope: 'scoped' };
+    return this.instance as T;
+  }
 
-    return new ctor(scopedProvider);
+  /**
+   * Erzeugt eine neue Instanz der Klasse für einen neues Scope.
+   *
+   * @returns Eine neue Instanz der Klasse.
+   */
+  public forScopedProvider(): DependencyDescriptor<T> {
+    const copy = new DependencyDescriptor(this.config, this.provider);
+
+    if (this.config.scope === 'singleton') {
+      copy.hasInstance = this.hasInstance;
+      copy.instance = this.instance;
+    }
+
+    return copy;
   }
 }

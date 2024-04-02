@@ -7,5 +7,5 @@ export type InjectableConfig = {
   /**
    * Der Gültigkeitsbereich des injizierbaren Dienstes.
    */
-  scope: Scope | undefined;
+  scope: Scope;
 };

@@ -1,11 +1,10 @@
 import { InjectableConfig } from './injectable-config';
 import { InjectableOptions } from './injectable-options';
-import { DI_OPTIONS_METADATA_KEY } from './metadata-key';
 
 /**
  * Register für alle Typen, die mit {@link Injectable} markiert sind.
  */
-export const InjectableTypes: Function[] = [];
+export const InjectableTypes: { ctor: Function; options: InjectableConfig }[] = [];
 
 /**
  * Markiert eine Klasse als injizierbar.
@@ -17,10 +16,11 @@ export const InjectableTypes: Function[] = [];
  */
 export function Injectable(options: InjectableOptions) {
   return (target: Function) => {
-    InjectableTypes.push(target);
-
-    const injectableConfig = Metadata.fromConstructor(target).set(DI_OPTIONS_METADATA_KEY, {
-      scope: options.scope,
-    } satisfies InjectableConfig);
+    InjectableTypes.push({
+      ctor: target,
+      options: {
+        scope: options.scope,
+      },
+    });
   };
 }
