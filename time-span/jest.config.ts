@@ -1,6 +1,8 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+import { JestConfigWithTsJest } from 'ts-jest';
+
+export default {
   testEnvironment: 'node',
+  testMatch: ['**/test/**/*.test.ts'],
   transform: {
     // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
     // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
@@ -11,4 +13,4 @@ module.exports = {
       },
     ],
   },
-};
+} satisfies JestConfigWithTsJest;
