@@ -3,9 +3,6 @@
   "extends": "../tsconfig.common.json",
   "compilerOptions": {
     "outDir": "./dist/es",
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
-    "target": "ES2021",
     "lib": [
       "ES2021",
     ]
