@@ -1,2 +1,2 @@
-export { TimeSpan } from './time-span';
-export { TimeSpanFormat } from './time-span-format';
+export { TimeSpan } from './time-span.js';
+export { TimeSpanFormat } from './time-span-format.js';

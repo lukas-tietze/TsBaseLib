@@ -1,4 +1,4 @@
-import { TimeSpan, TimeSpanComponent } from './time-span';
+import { TimeSpan, TimeSpanComponent } from './time-span.js';
 
 /**
  * Stellt ein Format für Zeitspannen dar.

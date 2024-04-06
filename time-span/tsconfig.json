@@ -2,9 +2,9 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "extends": "../tsconfig.common.json",
   "compilerOptions": {
-    "outDir": "./dist/",
-    "moduleResolution": "Bundler",
-    "module": "ES2022",
+    "outDir": "./dist/es",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "target": "ES2021",
     "lib": [
       "ES2021",

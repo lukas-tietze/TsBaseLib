@@ -1,4 +1,4 @@
-import { TimeSpanFormat } from './time-span-format';
+import { TimeSpanFormat } from './time-span-format.js';
 
 /**
  * Schlüssel für Bestandteile einer Zeitspann.
