@@ -10,15 +10,7 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "sourceMap": false,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "Node16",
-    "module": "Node16",
-    "target": "ESNext",
-    "outDir": "./dist/es",
-    "lib": [
-      "ESNext",
-    ]
+
   },
   "include": [
     "./src/**/*.ts"
