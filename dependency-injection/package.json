@@ -1,26 +1,33 @@
 {
-  "name": "@churill/dependency-injection",
-  "version": "0.0.1-preview1",
+  "name": "@churill/time-span",
+  "version": "0.0.1-preview7",
   "private": false,
   "preview": true,
   "description": "",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
   "files": [
     "./dist/"
   ],
   "exports": {
+    "./package.json": "./package.json",
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
   },
   "scripts": {
     "test": "jest",
     "build": "tsc",
     "clean": "rm -rf ./dist",
-    "rebuild": "npm run clean ; npm run build"
+    "rebuild": "npm run clean ; npm run build",
+    "prepare": "tshy"
   },
   "author": "Lukas Tietze",
   "license": "MIT",
@@ -28,14 +35,18 @@
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.4.3"
   },
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "ts-node": "^10.9.2",
-    "uninstall": "^0.0.0"
-  }
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
+  },
+  "type": "module"
 }

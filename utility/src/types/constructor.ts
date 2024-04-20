@@ -1,4 +1,4 @@
-import { RecursivePartial } from './recursive-partial';
+import type { RecursivePartial } from './recursive-partial.js';
 
 /**
  * Beschreibt einen Konstruktor, der keine Parameter annimmt.

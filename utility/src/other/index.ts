@@ -1,3 +1,2 @@
-export * from './cache';
-export * from './throw-helper';
-export * from '../meta-data/meta-data'
+export * from './cache.js';
+export * from './throw-helper.js';

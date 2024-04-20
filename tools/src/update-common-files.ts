@@ -29,8 +29,30 @@ async function updateStaticFiles(targetDir: string) {
   }
 }
 
-function mergePackageJson(src: object, target: object): object {
-  return target;
+function mergePackageJson(src: any, target: any): object {
+  return {
+    ...target,
+
+    private: src.private,
+    preview: src.preview,
+    main: src.main,
+    types: src.types,
+    files: src.files,
+    exports: src.exports,
+    scripts: {
+      ...target.scripts,
+      ...src.scripts,
+    },
+    author: src.author,
+    license: src.license,
+    devDependencies: {
+      ...target.devDependencies,
+      ...src.devDependencies,
+    },
+    publishConfig: src.publishConfig,
+    tshy: src.tshy,
+    type: src.type,
+  };
 }
 
 async function updatePackageJson(targetDir: string) {
@@ -46,7 +68,7 @@ async function updatePackageJson(targetDir: string) {
 
   const resultJson = mergePackageJson(srcJson, targetJson);
 
-  await writeFile(targetPath, JSON.stringify(resultJson, undefined, 2), { encoding: 'utf-8' });
+  await writeFile(targetPath, JSON.stringify(resultJson, undefined, 2) + '\n', { encoding: 'utf-8' });
 }
 
 async function run(argv: Arguments) {

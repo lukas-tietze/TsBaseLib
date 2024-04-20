@@ -1,5 +1,16 @@
 import { JestConfigWithTsJest } from 'ts-jest';
 
-import baseConfig from '../jest.config';
-
-export default { ...baseConfig } satisfies JestConfigWithTsJest;
+export default {
+  testEnvironment: 'node',
+  testMatch: ['**/test/**/*.test.ts'],
+  transform: {
+    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
+    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.test.json',
+      },
+    ],
+  },
+} satisfies JestConfigWithTsJest;

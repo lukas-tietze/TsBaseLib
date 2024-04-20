@@ -1,5 +1,3 @@
-import { TimeSpanFormat } from './time-span-format.js';
-
 /**
  * Schlüssel für Bestandteile einer Zeitspann.
  */
@@ -88,17 +86,12 @@ export class TimeSpan {
   public static MAX: TimeSpan = new TimeSpan(Number.MAX_SAFE_INTEGER);
 
   /**
-   * Die Millisekunden der dargestellten Zeitspanne.
-   */
-  private readonly value: number;
-
-  /**
    * Initialisiert eine neue Instanz der Klasse mit den gegebenen Millisekunden.
    *
    * @param milliseconds Die initialen Millisekunden.
    */
   constructor(milliseconds: number) {
-    this.value = milliseconds;
+    this.totalMilliseconds = milliseconds;
   }
 
   /**
@@ -120,13 +113,13 @@ export class TimeSpan {
     } else if (typeof init === 'string') {
       return TimeSpan.parse(init);
     } else if (typeof init === 'object') {
-      if ('value' in init && typeof init.value === 'number') {
-        return new TimeSpan(init.value);
+      if ('totalMilliseconds' in init && typeof init.totalMilliseconds === 'number') {
+        return new TimeSpan(init.totalMilliseconds);
       } else {
         return TimeSpan.fromTimes(init as TimeSpanObjectInit);
       }
     } else {
-      throw new Error('TimeSpan initialization with illegal value');
+      throw new Error('TimeSpan initialization with illegal totalMilliseconds');
     }
   }
 
@@ -134,38 +127,38 @@ export class TimeSpan {
    * Liest eine {@link TimeSpan}-Instanz aus einem String ein.
    * Das erlaubte Format ist dabei
    *
-   * @param value Der auszuwertende String.
+   * @param totalMilliseconds Der auszuwertende String.
    * @returns Die erzeugte Instanz.
    */
-  public static parse(value: string): TimeSpan {
-    return new TimeSpan(this.msFromString(value));
+  public static parse(totalMilliseconds: string): TimeSpan {
+    return new TimeSpan(this.msFromString(totalMilliseconds));
   }
 
   /**
    * Erzeugt eine {@link TimeSpan}-Instanz aus Einzelwerten.
    * Diese Einzelwerte dürfen nicht negativ sein.
    *
-   * @param value Die Einzelwerte.
+   * @param totalMilliseconds Die Einzelwerte.
    * @returns Die erzeugte Instanz.
    */
-  public static fromTimes(value: TimeSpanObjectInit): TimeSpan {
-    return new TimeSpan(this.msFromTimes(value));
+  public static fromTimes(totalMilliseconds: TimeSpanObjectInit): TimeSpan {
+    return new TimeSpan(this.msFromTimes(totalMilliseconds));
   }
 
   /**
    * Berechnet die gesamten Millisekunden aus Einzelwerten.
    * Diese Einzelwerte dürfen nicht negativ sein.
    *
-   * @param value Die Einzelwerte.
+   * @param totalMilliseconds Die Einzelwerte.
    * @returns Die erzeugte Instanz.
    */
-  private static msFromTimes(value: TimeSpanObjectInit): number {
+  private static msFromTimes(totalMilliseconds: TimeSpanObjectInit): number {
     return (
-      Math.max(0, value.days || 0) * this.MS_DAY +
-      Math.max(0, value.hours || 0) * this.MS_HOUR +
-      Math.max(0, value.minutes || 0) * this.MS_MINUTE +
-      Math.max(0, value.seconds || 0) * this.MS_SECOND +
-      Math.max(0, value.milliseconds || 0)
+      Math.max(0, totalMilliseconds.days || 0) * this.MS_DAY +
+      Math.max(0, totalMilliseconds.hours || 0) * this.MS_HOUR +
+      Math.max(0, totalMilliseconds.minutes || 0) * this.MS_MINUTE +
+      Math.max(0, totalMilliseconds.seconds || 0) * this.MS_SECOND +
+      Math.max(0, totalMilliseconds.milliseconds || 0)
     );
   }
 
@@ -189,11 +182,11 @@ export class TimeSpan {
    * - Trennzeichen `.`
    * - optional 3 Ziffern für die Angabe der Millisekunden
    */
-  private static msFromString(value: string): number {
-    const g = /^(?<minus>-)?(?<h>\d+):(?<m>\d{2}):(?<s>\d{2})(.(?<ms>\d{3}))?/.exec(value);
+  private static msFromString(totalMilliseconds: string): number {
+    const g = /^(?<minus>-)?(?<h>\d+):(?<m>\d{2}):(?<s>\d{2})(.(?<ms>\d{3}))?/.exec(totalMilliseconds);
 
     if (!g?.length) {
-      throw new Error(`Illegal string for TimeSpan "${value}"`);
+      throw new Error(`Illegal string for TimeSpan "${totalMilliseconds}"`);
     }
 
     const ms = this.msFromTimes({
@@ -209,71 +202,69 @@ export class TimeSpan {
   /**
    * Holt die Dauer der Zeitspanne in Millisekunden.
    */
-  public get totalMilliseconds(): number {
-    return this.value;
-  }
+  public totalMilliseconds: number;
 
   /**
    * Holt die Millisekunden-Komponente.
    */
   public get milliseconds(): number {
-    return this.value % TimeSpan.MS_SECOND;
+    return this.totalMilliseconds % TimeSpan.MS_SECOND;
   }
 
   /**
    * Holt die Sekunden-Komponente.
    */
   public get seconds(): number {
-    return Math.trunc((this.value % TimeSpan.MS_MINUTE) / TimeSpan.MS_SECOND);
+    return Math.trunc((this.totalMilliseconds % TimeSpan.MS_MINUTE) / TimeSpan.MS_SECOND);
   }
 
   /**
    * Holt die Minuten-Komponente.
    */
   public get minutes(): number {
-    return Math.trunc((this.value % TimeSpan.MS_HOUR) / TimeSpan.MS_MINUTE);
+    return Math.trunc((this.totalMilliseconds % TimeSpan.MS_HOUR) / TimeSpan.MS_MINUTE);
   }
 
   /**
    * Holt die Stunden-Komponente.
    */
   public get hours(): number {
-    return Math.trunc((this.value % TimeSpan.MS_DAY) / TimeSpan.MS_HOUR);
+    return Math.trunc((this.totalMilliseconds % TimeSpan.MS_DAY) / TimeSpan.MS_HOUR);
   }
 
   /**
    * Holt die Tages-Komponente.
    */
   public get days(): number {
-    return Math.trunc(this.value / TimeSpan.MS_DAY);
+    return Math.trunc(this.totalMilliseconds / TimeSpan.MS_DAY);
   }
 
   /**
    * Holt die Dauer der Zeitspanne in Sekunden.
    */
   public get totalSeconds(): number {
-    return this.value / TimeSpan.MS_SECOND;
+    return this.totalMilliseconds / TimeSpan.MS_SECOND;
   }
 
   /**
    * Holt die Dauer der Zeitspanne in Minuten.
    */
   public get totalMinutes(): number {
-    return this.value / TimeSpan.MS_MINUTE;
+    return this.totalMilliseconds / TimeSpan.MS_MINUTE;
   }
 
   /**
    * Holt die Dauer der Zeitspanne in Stunden.
    */
   public get totalHours(): number {
-    return this.value / TimeSpan.MS_HOUR;
+    return this.totalMilliseconds / TimeSpan.MS_HOUR;
   }
 
   /**
    * Holt die Dauer der Zeitspanne in Tagen.
    */
   public get totalDays(): number {
-    return this.value / TimeSpan.MS_DAY;
+    return this.totalMilliseconds / TimeSpan.MS_DAY;
   }
 
   /**
@@ -283,7 +274,7 @@ export class TimeSpan {
    * @returns Ein {@link Date}, das dem aktuellen Zeitpunkt plus der dargestellten Zeitspanne entspricht.
    */
   public fromNow(): Date {
-    return new Date(Date.now() + this.value);
+    return new Date(Date.now() + this.totalMilliseconds);
   }
 
   /**
@@ -295,11 +286,11 @@ export class TimeSpan {
    * @returns Ein {@link Date}, das dem Zeitpunkt {@link to } plus der dargestellten Zeitspanne entspricht.
    */
   public addTo(to: Date | string | number): Date {
-    return new Date(new Date(to).getTime() + this.value);
+    return new Date(new Date(to).getTime() + this.totalMilliseconds);
   }
 
   public subtractFrom(to: Date | string | number): Date {
-    return new Date(new Date(to).getTime() - this.value);
+    return new Date(new Date(to).getTime() - this.totalMilliseconds);
   }
 
   /**
@@ -310,7 +301,7 @@ export class TimeSpan {
    * @returns Eine neue {@link TimeSpan}-Instanz.
    */
   public add(other: TimeSpan): TimeSpan {
-    return new TimeSpan(this.value + other.value);
+    return new TimeSpan(this.totalMilliseconds + other.totalMilliseconds);
   }
 
   /**
@@ -321,7 +312,7 @@ export class TimeSpan {
    * @returns Eine neue {@link TimeSpan}-Instanz.
    */
   public sub(other: TimeSpan): TimeSpan {
-    return new TimeSpan(this.value - other.value);
+    return new TimeSpan(this.totalMilliseconds - other.totalMilliseconds);
   }
 
   /**
@@ -331,7 +322,7 @@ export class TimeSpan {
    * @returns Die aktuelle Instanz.
    */
   public addMilliseconds(milliseconds: number): TimeSpan {
-    return new TimeSpan(Math.round(this.value + milliseconds));
+    return new TimeSpan(Math.round(this.totalMilliseconds + milliseconds));
   }
 
   /**
@@ -341,7 +332,7 @@ export class TimeSpan {
    * @returns Die aktuelle Instanz.
    */
   public addSeconds(seconds: number): TimeSpan {
-    return new TimeSpan(Math.round(this.value + seconds * TimeSpan.MS_SECOND));
+    return new TimeSpan(Math.round(this.totalMilliseconds + seconds * TimeSpan.MS_SECOND));
   }
 
   /**
@@ -351,7 +342,7 @@ export class TimeSpan {
    * @returns Die aktuelle Instanz.
    */
   public addMinutes(minutes: number): TimeSpan {
-    return new TimeSpan(Math.round(this.value + minutes * TimeSpan.MS_MINUTE));
+    return new TimeSpan(Math.round(this.totalMilliseconds + minutes * TimeSpan.MS_MINUTE));
   }
 
   /**
@@ -361,7 +352,7 @@ export class TimeSpan {
    * @returns Die aktuelle Instanz.
    */
   public addHours(hours: number): TimeSpan {
-    return new TimeSpan(Math.round(this.value + hours * TimeSpan.MS_HOUR));
+    return new TimeSpan(Math.round(this.totalMilliseconds + hours * TimeSpan.MS_HOUR));
   }
 
   /**
@@ -371,7 +362,7 @@ export class TimeSpan {
    * @returns Die aktuelle Instanz.
    */
   public addDays(days: number): TimeSpan {
-    return new TimeSpan(Math.round(this.value + days * TimeSpan.MS_DAY));
+    return new TimeSpan(Math.round(this.totalMilliseconds + days * TimeSpan.MS_DAY));
   }
 
   /**
@@ -381,7 +372,7 @@ export class TimeSpan {
    * @returns Eine neue {@link TimeSpan}-Instanz.
    */
   public abs(): TimeSpan {
-    return new TimeSpan(Math.abs(this.value));
+    return new TimeSpan(Math.abs(this.totalMilliseconds));
   }
 
   /**
@@ -401,11 +392,11 @@ export class TimeSpan {
    */
   public compare(other: TimeSpan | string | number): number {
     if (typeof other === 'object') {
-      return this.value - other.value;
+      return this.totalMilliseconds - other.totalMilliseconds;
     } else if (typeof other === 'number') {
-      return this.value - other;
+      return this.totalMilliseconds - other;
     } else {
-      return this.value - TimeSpan.parse(other).value;
+      return this.totalMilliseconds - TimeSpan.parse(other).totalMilliseconds;
     }
   }
 
@@ -493,32 +484,25 @@ export class TimeSpan {
   }
 
   /**
-   * Formatiert die dargestellte Zeitspanne mit dem
-   * gegebenen Format.
-   *
-   * @param format Das zu nutzende Format.
-   * @returns Den formatierten String.
-   */
-  public format(format: TimeSpanFormat): string {
-    return format.format(this);
-  }
-
-  /**
    * Erzeugt einen String, der die Zeitspanne darstellt.
    *
    * @returns Den erzeugten String.
    */
   public toString(options?: ToStringOptions): string {
-    const hours = (this.hours + this.days * 24).toFixed(0);
-    const minutes = this.minutes.toFixed(0).padStart(2, '0');
-    const seconds = this.seconds.toFixed(0).padStart(2, '0');
+    const hours = Math.abs(this.hours + this.days * 24).toFixed(0);
+    const minutes = Math.abs(this.minutes).toFixed(0).padStart(2, '0');
+    const seconds = Math.abs(this.seconds).toFixed(0).padStart(2, '0');
 
     let res = `${hours}:${minutes}:${seconds}`;
 
     const ms = this.milliseconds;
 
     if (options?.milliseconds === true || (options?.milliseconds !== false && ms !== 0)) {
-      res += '.' + ms.toFixed(0).padStart(3, '0');
+      res += '.' + Math.abs(ms).toFixed(0).padStart(3, '0');
+    }
+
+    if (this.totalMilliseconds < 0) {
+      res = '-' + res;
     }
 
     return res;
@@ -544,6 +528,6 @@ export class TimeSpan {
    * @returns Den numerischen Wert der Instanz.
    */
   public valueOf(): number {
-    return this.value;
+    return this.totalMilliseconds;
   }
 }

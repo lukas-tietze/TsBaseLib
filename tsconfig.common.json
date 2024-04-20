@@ -12,8 +12,8 @@
     "noImplicitThis": true,
     "sourceMap": false,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
-    "target": "ES2021",
-  },
+    "moduleResolution": "Node16",
+    "module": "Node16",
+    "target": "ES2021"
+  }
 }

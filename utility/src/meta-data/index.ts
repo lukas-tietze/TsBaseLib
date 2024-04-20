@@ -1,2 +1,2 @@
-export * from './meta-data';
-export * from './meta-data-key';
+export * from './meta-data.js';
+export * from './meta-data-key.js';

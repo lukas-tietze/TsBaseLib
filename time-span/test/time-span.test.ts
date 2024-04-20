@@ -146,4 +146,11 @@ describe('time-span', () => {
     expect(t.seconds).toStrictEqual(-0);
     expect(t.milliseconds).toStrictEqual(-0);
   });
+
+  it('should format negative values correctly', () => {
+    expect(TimeSpan.fromSeconds(-10).toString()).toEqual('-0:00:10')
+    expect(TimeSpan.fromMinutes(-10).toString()).toEqual('-0:10:00')
+    expect(TimeSpan.fromHours(-10).toString()).toEqual('-10:00:00')
+    expect(TimeSpan.ZERO.addHours(-1).addMinutes(-1).addSeconds(-1).toString()).toEqual('-1:01:01')
+  });
 });

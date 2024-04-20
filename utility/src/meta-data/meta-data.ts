@@ -1,5 +1,5 @@
-import { useAllExtensions } from '../extensions';
-import { MetadataKey } from './meta-data-key';
+import { useAllExtensions } from '../extensions/index.js';
+import { MetadataKey } from './meta-data-key.js';
 
 export class Metadata {
   private static metadataByConstructor: Map<NewableFunction, Record<string, any>> = new Map();
