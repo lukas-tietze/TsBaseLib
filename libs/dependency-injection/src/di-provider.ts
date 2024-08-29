@@ -1,9 +1,10 @@
-import type { InjectionHints } from './injection-hints';
-import type { InjectionToken } from './injection-token';
-import type { Ctor } from './types';
+import type { InjectionHints } from './injection-hints.js';
+import type { InjectionToken } from './injection-token.js';
+import type { Ctor } from './types.js';
 
-// TODO: Doku
-
+/**
+ *
+ */
 export interface DiProvider {
   onUnknownScopedServiceAdded?: (type: Ctor<unknown>) => void;
 

@@ -1,7 +1,8 @@
-import { DiProvider } from './di-provider';
-import { InjectableConfig } from './injectable-config';
-import { InjectionHints } from './injection-hints';
-import { Ctor, ProviderFunction, Scope } from './types';
+import { DiProvider } from './di-provider.js';
+import { InjectableConfig } from './injectable-config.js';
+import { InjectionHints } from './injection-hints.js';
+
+import type { ProviderFunction, Scope } from './types.js';
 
 /**
  * Stellt die Basisklasse für die Beschreibung eines injizierbaren Dienstes dar.

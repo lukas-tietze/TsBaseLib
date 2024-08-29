@@ -1,6 +1,6 @@
-import type { DiProvider } from './di-provider';
-import type { InjectionToken } from './injection-token';
-import type { Ctor, ProviderFunction } from './types';
+import type { DiProvider } from './di-provider.js';
+import type { InjectionToken } from './injection-token.js';
+import type { Ctor, ProviderFunction } from './types.js';
 
 /**
  * Diese Klasse ermöglicht die Konfiguration der Dependency-Injection.

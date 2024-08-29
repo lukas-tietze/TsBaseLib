@@ -1,4 +1,4 @@
-import type { DiProvider } from './di-provider';
+import type { DiProvider } from './di-provider.js';
 
 /**
  * Stellt einen Konstruktor mit beliebigen Parametern dar.

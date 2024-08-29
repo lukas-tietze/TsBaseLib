@@ -1,5 +1,5 @@
-import { InjectableConfig } from './injectable-config';
-import { InjectableOptions } from './injectable-options';
+import type { InjectableConfig } from './injectable-config.js';
+import type { InjectableOptions } from './injectable-options.js';
 
 /**
  * Register für alle Typen, die mit {@link Injectable} markiert sind.
@@ -15,12 +15,11 @@ export const InjectableTypes: { ctor: Function; options: InjectableConfig }[] = 
  * @returns Einen Klassen-Dekorator.
  */
 export function Injectable(options: InjectableOptions) {
-  return (target: Function) => {
+  return (target: Function) =>
     InjectableTypes.push({
       ctor: target,
       options: {
         scope: options.scope,
       },
     });
-  };
 }

@@ -1,4 +1,4 @@
-import { Scope } from './types';
+import type { Scope } from './types.js';
 
 /**
  * Stellt Optionen für die Markierung injizierbarer Dienste dar.

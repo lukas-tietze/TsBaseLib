@@ -1,9 +1,10 @@
-import { DependencyDescriptor } from './dependency-descriptor';
-import { DiProvider } from './di-provider';
-import { InjectableTypes } from './injectable-decorator';
-import { InjectionHints } from './injection-hints';
-import { InjectionToken } from './injection-token';
-import { Ctor, ProviderFunction, Scope } from './types';
+import { DependencyDescriptor } from './dependency-descriptor.js';
+import { DiProvider } from './di-provider.js';
+import { InjectableTypes } from './injectable-decorator.js';
+import { InjectionHints } from './injection-hints.js';
+import { InjectionToken } from './injection-token.js';
+
+import type { Ctor, ProviderFunction, Scope } from './types.js';
 
 /**
  * Diese Klasse ermöglicht die Konfiguration der Dependency-Injection.
