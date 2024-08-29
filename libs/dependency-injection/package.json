@@ -1,11 +1,9 @@
 {
-  "name": "@churill/time-span",
+  "name": "@churill/di",
   "version": "0.0.1-preview7",
   "private": false,
   "preview": true,
   "description": "",
-  "main": "./dist/commonjs/index.js",
-  "types": "./dist/commonjs/index.d.ts",
   "files": [
     "./dist/"
   ],
