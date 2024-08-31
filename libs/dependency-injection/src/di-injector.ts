@@ -1,5 +1,4 @@
 import { DependencyDescriptor } from './dependency-descriptor.js';
-import { DiProvider } from './di-provider.js';
 import { InjectableTypes } from './injectable-decorator.js';
 import { InjectionHints } from './injection-hints.js';
 import { InjectionToken } from './injection-token.js';
@@ -16,12 +15,6 @@ export class DiInjector {
   private descriptors: Map<Ctor<unknown> | InjectionToken<unknown>, DependencyDescriptor<unknown>>;
 
   /**
-   * Gibt an, ob es erlaubt ist, unbekannte Dienste mit beschränktem Gültigkeitsbereich (Scoped)
-   * zu erzeugen, auch wenn sie nicht registriert wurden und diese ad hoc zu registrieren.
-   */
-  private unknownScopedServicesAllowed: boolean;
-
-  /**
    * Ein Stack zur Speicherung der Abfolge einer Dienst-Instanziierung.
    * Dadurch lassen sich zyklische Abhängigkeiten erkennen und auswerten.
    */
@@ -32,20 +25,6 @@ export class DiInjector {
    */
   constructor() {
     this.descriptors = new Map();
-    this.unknownScopedServicesAllowed = false;
-  }
-
-  /**
-   * Legt fest, das unbekannte Dienste mit beschränktem Gültigkeitsbereich (Scoped)
-   * im {@link DiProvider} erzeugt werden dürfen, auch wenn sie nicht registriert wurden.
-   * Diese Dienste werden dann ad hoc registriert.
-   *
-   * @returns Die aktuelle Instanz, um Method-Chaining zu ermöglichen.
-   */
-  public allowUnknownScopedServices(): DiInjector {
-    this.unknownScopedServicesAllowed = true;
-
-    return this;
   }
 
   /**
@@ -280,8 +259,12 @@ export class DiInjector {
   public createScope(): DiInjector {
     const copy = new DiInjector();
 
-    copy.descriptors = new Map(Array.from(this.descriptors).map(([i, p]) => [i, p.forScopedProvider()]));
-    copy.allowUnknownScopedServices = this.allowUnknownScopedServices;
+    copy.descriptors = new Map();
+
+    for (const [key, value] of this.descriptors) {
+      copy.descriptors.set(key, value.forScopedProvider());
+    }
+
     copy.instantiationStack = [...this.instantiationStack];
 
     return copy;
@@ -310,14 +293,6 @@ export class DiInjector {
 
     try {
       let descriptor = this.descriptors.get(token) as DependencyDescriptor<T> | undefined;
-
-      if (!descriptor && !(token instanceof InjectionToken) && this.unknownScopedServicesAllowed) {
-        const ctor = token;
-
-        descriptor = new DependencyDescriptor({ scope: 'scoped' }, () => new ctor());
-
-        this.descriptors.set(token, descriptor);
-      }
 
       instance = descriptor?.getInstance(this, hints);
     } catch (e) {
