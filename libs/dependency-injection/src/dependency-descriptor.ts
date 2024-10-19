@@ -60,13 +60,14 @@ export class DependencyDescriptor<T> {
    * @returns Eine neue Instanz der Klasse.
    */
   public forScopedProvider(): DependencyDescriptor<T> {
-    const copy = new DependencyDescriptor(this.config, this.provider);
-
     if (this.config.scope === 'singleton') {
-      copy.hasInstance = this.hasInstance;
-      copy.instance = this.instance;
+      return this;
     }
 
-    return copy;
+    return new DependencyDescriptor(this.config, this.provider);
+  }
+
+  public clone(): DependencyDescriptor<T> {
+    return new DependencyDescriptor(this.config, this.provider);
   }
 }

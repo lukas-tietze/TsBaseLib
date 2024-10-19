@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { AsyncUtils, MiddlewareStackBuilder } from '../../src';
 
 describe('middleware', () => {
@@ -12,7 +12,7 @@ describe('middleware', () => {
     builder.add((num, prefix, suffix, next) => next(num + 2, prefix.repeat(2), suffix.repeat(2)));
     const fn = builder.build(handler);
 
-    expect(fn(4, '>', '<')).toBe('>>(6)<<');
+    expect(fn(4, '>', '<')).toEqual('>>(6)<<');
   });
   it('should work without arguments', () => {
     let someValue = 0;
@@ -31,8 +31,8 @@ describe('middleware', () => {
 
     const fn = builder.build(handler);
 
-    expect(fn()).toBe('Test');
-    expect(someValue).toBe(1);
+    expect(fn()).toEqual('Test');
+    expect(someValue).toEqual(1);
   });
   it('should work with one argument', () => {
     function handler(arg: number): string {
@@ -44,7 +44,7 @@ describe('middleware', () => {
     builder.add((num, next) => next(num + 2));
     const fn = builder.build(handler);
 
-    expect(fn(4)).toBe('(6)');
+    expect(fn(4)).toEqual('(6)');
   });
 
   it('should work with async / Promise', async () => {
@@ -64,7 +64,7 @@ describe('middleware', () => {
 
     const fn = builder.build(handler);
 
-    expect(await fn(5)).toBe('(7)');
+    expect(await fn(5)).toEqual('(7)');
   });
 
   it('should work with void return type', () => {
@@ -84,8 +84,8 @@ describe('middleware', () => {
 
     const fn = builder.build(handler);
 
-    expect(fn(valueHolder)).toBe(void 0);
-    expect(valueHolder.handler).toBe(1);
-    expect(valueHolder.middleware).toBe(1);
+    expect(fn(valueHolder)).toEqual(void 0);
+    expect(valueHolder.handler).toEqual(1);
+    expect(valueHolder.middleware).toEqual(1);
   });
 });

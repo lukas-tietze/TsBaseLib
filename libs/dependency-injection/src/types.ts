@@ -6,6 +6,11 @@ import type { DiProvider } from './di-provider.js';
 export type Ctor<T> = (new (...params: any[]) => T) | (new () => T);
 
 /**
+ * TODO
+ */
+export type DiCtor<T> = (new (di: DiProvider) => T) | (new () => T);
+
+/**
  * Holt den Ergebnistyp eines Aufrufs `new T()`, falls `T` ein Konstruktor ist.
  */
 export type ConstructedType<T extends Ctor<unknown>> = T extends Ctor<infer TConstructed> ? TConstructed : never;
