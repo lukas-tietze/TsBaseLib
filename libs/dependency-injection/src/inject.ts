@@ -1,7 +1,6 @@
-import { DiProvider } from './di-provider';
-import { InjectionHints } from './injection-hints';
-import { InjectionToken } from './injection-token';
-import { Ctor, DiCtor } from './types';
+import { DiProvider } from './di-provider.js';
+import { InjectionToken } from './injection-token.js';
+import { Ctor, DiCtor } from './types.js';
 
 export const InjectionContext = {
   currentContext: undefined as DiProvider | undefined,

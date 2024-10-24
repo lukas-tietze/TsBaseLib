@@ -1,6 +1,6 @@
-export * from './di-provider';
-export * from './di-collection';
-export * from './injection-token';
-export * from './injectable-decorator';
-export * from './injectable-options';
-export { inject } from './inject'
+export * from './di-provider.js';
+export * from './di-collection.js';
+export * from './injection-token.js';
+export * from './injectable-decorator.js';
+export * from './injectable-options.js';
+export { inject } from './inject.js';
