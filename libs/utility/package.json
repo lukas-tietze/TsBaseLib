@@ -1,0 +1,52 @@
+{
+  "name": "@churill/utility",
+  "version": "0.0.1-preview5",
+  "private": false,
+  "preview": true,
+  "description": "",
+  "files": [
+    "./dist/"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "build": "tsc",
+    "clean": "rm -rf ./dist",
+    "rebuild": "npm run clean ; npm run build",
+    "prepare": "tshy"
+  },
+  "author": "Lukas Tietze",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
+  },
+  "type": "module",
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts"
+}

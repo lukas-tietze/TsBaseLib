@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@churill/time-span": "^0.0.1-preview4"
+    "@churill/time-span": "^0.0.1-preview7"
   }
 }

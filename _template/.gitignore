@@ -7,3 +7,6 @@ node_modules2
 
 package-lock.json
 bun.lockb
+
+.tshy
+.tshy-build

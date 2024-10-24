@@ -25,7 +25,7 @@ if ([System.String]::IsNullOrWhiteSpace($project)) {
   SafeExit 'Projektbezeichnung darf nicht leer sein'
 }
 
-$path = [System.IO.Path]::Combine($cwd, $project);
+$path = [System.IO.Path]::Combine($cwd, 'libs', $project);
 
 if (!(Test-Path -Path $path)) {
   SafeExit "Das Projekt $project konnte unter Pfad $path nicht gefunden werden"
